@@ -32,14 +32,25 @@ function ajk_cookie_layout( $a, $c ) {
 		return '<p>Please add order or only parameters to the [cookie_layout] shortcode.</p>' . do_shortcode($c);
 	}
 	
+	// remove auto-p bs
+	if ( '<br />' === substr( $c, 0, 6) ) $c = substr( $c, 6 );
+	if ( '<br />\n' === substr( $c, -7 ) ) $c = substr( $c, 0, -7 );
+	elseif ( '<br />\r\n' === substr( $c, -8 ) ) $c = substr( $c, 0, -8 );// windows linebreaks
+	
+	// assemble divs
 	$out = '<div';
 	if ( isset($a['order']) ) $out .= ' data-visitor-order=' . $a['order'];
-	if ( isset($a['only']) ) $out .= ' data-visitor-only=' . $a['only'];
+	if ( isset($a['only']) ) $out .= ' data-visitor-only=1';
 	if ( isset($a['class']) ) $out .= " class='{$a['class']}'";
 	if ( isset($a['id']) ) $out .= " id='{$a['id']}'";
 	$out .= '>';
 	$out .= do_shortcode($c);
 	$out .= '</div>';
+	
+	// error_log('$c');
+	// error_log($c);
+	// error_log('$out');
+	// error_log($out);
 	
 	// add JS if it hasn't been done yet
 	if ( ! defined('AJK_COOKIE_LAYOUT_JS_HAS_BEEN_ADDED') )
@@ -57,9 +68,9 @@ function ajk_cookie_layout( $a, $c ) {
 
 function print_ajk_cookie_layout_js()
 {
-	$cookie = get_queried_object_id();
+	$cookie = 'cookiebasedlayout' . get_queried_object_id();
 	?>
-	<script>(function(){var i,e,n='3',a='[data-visitor-order="',c='ambientsleepingpill=';if(~document.cookie.indexOf(c+n)){if(e=document.querySelectorAll('[data-visitor-only]'))for(i=0;i<e.length;++i)e[i].outerHTML='';}else{if(e=document.querySelectorAll(a+'0"]'))for(i=0;i<e.length;++i)e[i].outerHTML='';for(i=1;e=document.querySelector(a+i+'"]');++i)e.parentElement.appendChild(e);i=1;if(~document.cookie.indexOf(c))i+=parseInt(document.cookie.split(c)[1].slice(0,1));document.cookie=c+i+'; max-age='+3e7+'; path=/';}})();</script>
+	<script>(function(){var i,e,n='3',a='[data-visitor-order="',c='<?php echo $cookie ?>=';if(~document.cookie.indexOf(c+n)){if(e=document.querySelectorAll('[data-visitor-only]'))for(i=0;i<e.length;++i)e[i].outerHTML='';}else{if(e=document.querySelectorAll(a+'0"]'))for(i=0;i<e.length;++i)e[i].outerHTML='';for(i=1;e=document.querySelector(a+i+'"]');++i)e.parentElement.appendChild(e);i=1;if(~document.cookie.indexOf(c))i+=parseInt(document.cookie.split(c)[1].slice(0,1));document.cookie=c+i+'; max-age='+3e7+'; path=/';}})();</script>
 	<?php
 }
 
