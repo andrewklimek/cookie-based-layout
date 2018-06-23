@@ -22,8 +22,24 @@ Cookie-Based Layout. If not, see https://www.gnu.org/licenses/gpl-2.0.html.
 */
 
 
-add_shortcode( 'cookie_layout', 'ajk_cookie_layout' );
+// add_shortcode( 'cookie_layout', 'ajk_cookie_layout' );
+add_filter( 'the_content', 'ajk_cookie_layout_custom_shortcode_parsing', 9 );// Run this early to avoid wpautop
+// add_filter( 'widget_text', 'ajk_cookie_layout_custom_shortcode_parsing', 9 );// also process text and HTML widgets
+	
+function ajk_cookie_layout_custom_shortcode_parsing( $c ) {
+    
+	if ( false === strpos($c, '[cookie_layout') ) return $c;
+		
+    $p = "/\[cookie_layout([^\]]*)\]((?:[^\[]*|\[(?!\/cookie_layout\]))*)\[\/cookie_layout\]/";
+	
+    $tag = "cookie_layout";
+    $c = preg_replace_callback(
+		"/\[{$tag}([^\]]*)\]((?:[^\[]*|\[(?!\/{$tag}\]))*)\[\/{$tag}\]/",
+		function($m){ return ajk_cookie_layout( shortcode_parse_atts($m[1]), $m[2], $tag );},
+		$c );
 
+    return $c;
+}
 
 function ajk_cookie_layout( $a, $c ) {
 	
@@ -31,12 +47,7 @@ function ajk_cookie_layout( $a, $c ) {
 	{
 		return '<p>Please add order or only parameters to the [cookie_layout] shortcode.</p>' . do_shortcode($c);
 	}
-	
-	// remove auto-p bs
-	if ( '<br />' === substr( $c, 0, 6) ) $c = substr( $c, 6 );
-	if ( '<br />\n' === substr( $c, -7 ) ) $c = substr( $c, 0, -7 );
-	elseif ( '<br />\r\n' === substr( $c, -8 ) ) $c = substr( $c, 0, -8 );// windows linebreaks
-	
+
 	// assemble divs
 	$out = '<div';
 	if ( isset($a['order']) ) $out .= ' data-visitor-order=' . $a['order'];
@@ -44,7 +55,7 @@ function ajk_cookie_layout( $a, $c ) {
 	if ( isset($a['class']) ) $out .= " class='{$a['class']}'";
 	if ( isset($a['id']) ) $out .= " id='{$a['id']}'";
 	$out .= '>';
-	$out .= do_shortcode($c);
+	$out .= $c;
 	$out .= '</div>';
 	
 	// error_log('$c');
