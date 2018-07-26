@@ -24,7 +24,7 @@ Cookie-Based Layout. If not, see https://www.gnu.org/licenses/gpl-2.0.html.
 
 // add_shortcode( 'cookie_layout', 'ajk_cookie_layout' );
 add_filter( 'the_content', 'ajk_cookie_layout_custom_shortcode_parsing', 9 );// Run this early to avoid wpautop
-// add_filter( 'widget_text', 'ajk_cookie_layout_custom_shortcode_parsing', 9 );// also process text and HTML widgets
+// add_filter( 'widget_text_content', 'ajk_cookie_layout_custom_shortcode_parsing', 9 );// also process text and HTML widgets
 	
 function ajk_cookie_layout_custom_shortcode_parsing( $c ) {
 
