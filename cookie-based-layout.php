@@ -27,17 +27,16 @@ add_filter( 'the_content', 'ajk_cookie_layout_custom_shortcode_parsing', 9 );// 
 // add_filter( 'widget_text', 'ajk_cookie_layout_custom_shortcode_parsing', 9 );// also process text and HTML widgets
 	
 function ajk_cookie_layout_custom_shortcode_parsing( $c ) {
+
+	$tag = "cookie_layout";
+
+	if ( false === strpos($c, '[' . $tag ) ) return $c;
     
-	if ( false === strpos($c, '[cookie_layout') ) return $c;
-		
-    $p = "/\[cookie_layout([^\]]*)\]((?:[^\[]*|\[(?!\/cookie_layout\]))*)\[\/cookie_layout\]/";
-	
-    $tag = "cookie_layout";
-    $c = preg_replace_callback(
+	$c = preg_replace_callback(
 		"/\[{$tag}([^\]]*)\]((?:[^\[]*|\[(?!\/{$tag}\]))*)\[\/{$tag}\]/",
 		function($m){ return ajk_cookie_layout( shortcode_parse_atts($m[1]), $m[2], $tag );},
 		$c );
-
+	
     return $c;
 }
 
