@@ -3,7 +3,7 @@
 Plugin Name: Cookie-Based Layout
 Plugin URI:  https://github.com/andrewklimek/
 Description: 
-Version:     1.0.0
+Version:     1.0.1
 Author:      Andrew J Klimek
 Author URI:  https://andrewklimek.com
 License:     GPL2
@@ -34,7 +34,7 @@ function ajk_cookie_layout_custom_shortcode_parsing( $c ) {
     
 	$c = preg_replace_callback(
 		"/\[{$tag}([^\]]*)\]((?:[^\[]*|\[(?!\/{$tag}\]))*)\[\/{$tag}\]/",
-		function($m){ return ajk_cookie_layout( shortcode_parse_atts($m[1]), $m[2], $tag );},
+		function($m){ return ajk_cookie_layout( shortcode_parse_atts($m[1]), $m[2]);},
 		$c );
 	
     return $c;
